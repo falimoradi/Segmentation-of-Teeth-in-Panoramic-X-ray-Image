@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 from imutils import perspective
 from scipy.spatial import distance as dist
+from rotated_rect_crop import crop_rotated_rectangle
+
 def midpoint(ptA, ptB):
 	return ((ptA[0] + ptB[0]) * 0.5, (ptA[1] + ptB[1]) * 0.5)
 # Load in image, convert to gray scale, and Otsu's threshold
@@ -39,8 +41,15 @@ def CCA_Analysis(orig_image,predict_image,erode_iteration,open_iteration):
         if c_area>2000:
             count2+=1
         
+        
+
+
         (x,y),radius = cv2.minEnclosingCircle(cnts)
         rect = cv2.minAreaRect(cnts)
+
+        
+
+
         box = cv2.boxPoints(rect)
         box = np.array(box, dtype="int")    
         box = perspective.order_points(box)
@@ -74,9 +83,8 @@ def CCA_Analysis(orig_image,predict_image,erode_iteration,open_iteration):
         cv2.putText(image2, "{:.1f}pixel".format(dimB),(int(trbrX + 10), int(trbrY)), cv2.FONT_HERSHEY_SIMPLEX,0.65, color, 2)
         cv2.putText(image2, "{:.1f}".format(label),(int(tltrX - 35), int(tltrY - 5)), cv2.FONT_HERSHEY_SIMPLEX,0.65, color, 2)
     teeth_count=count2
-    return image2,teeth_count
-
-
-
-
-
+    if True:
+      print('in cropping')
+      print('fdsafsda', rect)
+      image_cropped = crop_rotated_rectangle(orig_image, rect)
+    return image2,teeth_count, image_cropped
